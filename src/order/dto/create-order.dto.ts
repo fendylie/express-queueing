@@ -1,4 +1,4 @@
-import { IsNotEmpty } from "class-validator";
+import { IsEmail, IsNotEmpty, Min } from "class-validator";
 
 export class CreateOrderDto {
   @IsNotEmpty()
@@ -11,5 +11,7 @@ export class CreateOrderDto {
   order_number: string;
 
   @IsNotEmpty()
-  diamond: string;
+  @Min(10)
+  @IsEmail()
+  diamond: number;
 }

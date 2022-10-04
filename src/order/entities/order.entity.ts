@@ -23,14 +23,14 @@ export class Order {
   order_number: string;
 
   @Column()
-  diamond: string;
+  diamond: number;
 
   @Column({ default: "PENDING" })
   status: ORDER_STATUS;
 
   @CreateDateColumn()
-  createdAt: Date;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updated_at: Date;
 }

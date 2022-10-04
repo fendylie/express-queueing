@@ -1,5 +1,6 @@
 import { DataSource } from "typeorm";
 import { Order } from "../order/entities/order.entity";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 
 export default new DataSource({
   type: "mysql",
@@ -8,7 +9,8 @@ export default new DataSource({
   username: "root",
   password: "",
   database: "express",
-  synchronize: process.env.NODE_ENV === "DEVELOPMENT",
+  synchronize: process.env.NODE_ENV !== "production",
   logging: false,
+  namingStrategy: new SnakeNamingStrategy(),
   entities: [Order],
 });

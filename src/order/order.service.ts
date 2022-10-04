@@ -2,6 +2,7 @@ import { Order } from "./entities/order.entity";
 import database from "../config/database";
 import { CreateOrderDto } from "./dto/create-order.dto";
 import { UpdateOrderDto } from "./dto/update-order.dto";
+import { ResponseMessageType } from "../constants";
 
 export class OrderService {
   constructor(private orderRepository = database.getRepository(Order)) {}
@@ -14,7 +15,7 @@ export class OrderService {
     const order = await this.orderRepository.findOneBy({ id: Number(id) });
 
     if (!order) {
-      throw new Error("Order not found");
+      throw new Error(ResponseMessageType.NOT_FOUND);
     }
 
     return order;

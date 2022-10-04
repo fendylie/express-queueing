@@ -1,63 +1,86 @@
 import { Request, Response } from "express";
 import { OrderService } from "./order.service";
 import { createOrder } from "../jobs/queues/order.queue";
-import { ErrorMessageType } from "../constants";
+import { ResponseMessageType, StatusCodeType } from "../constants";
+import { ResponseBody } from "../@core/interfaces/response.interface";
+import { Order } from "./entities/order.entity";
 
 export class OrderController {
   constructor(private orderService: OrderService) {}
 
-  async findAll(req: Request, res: Response): Promise<void> {
+  async findAll(
+    req: Request,
+    res: Response<ResponseBody<Order[]>>
+  ): Promise<void> {
     try {
-      const users = await this.orderService.findAll();
+      const orders = await this.orderService.findAll();
 
-      res.status(200).json({
-        statusCode: 200,
-        message: ErrorMessageType.SUCCESS_FETCH_DATA,
-        data: users,
+      res.status(StatusCodeType.OK).json({
+        statusCode: StatusCodeType.OK,
+        message: ResponseMessageType.SUCCESS_FETCH_DATA,
+        data: orders,
       });
     } catch (err) {
-      res.status(500).json({
-        statusCode: 500,
-        message: ErrorMessageType.INTERNAL_SERVER_ERROR,
+      res.status(StatusCodeType.INTERNAL_SERVER_ERROR).json({
+        statusCode: StatusCodeType.INTERNAL_SERVER_ERROR,
+        message: ResponseMessageType.INTERNAL_SERVER_ERROR,
       });
     }
   }
 
-  async create(req: Request, res: Response): Promise<void> {
+  async create(
+    req: Request,
+    res: Response<ResponseBody<Order>>
+  ): Promise<void> {
     const body = req.body;
+
     try {
       const order = await this.orderService.create(body);
-      await createOrder(body);
+      await createOrder(order);
 
-      res.status(200).json({
-        statusCode: 200,
-        message: ErrorMessageType.SUCCESS_CREATE_DATA,
+      res.status(StatusCodeType.CREATED).json({
+        statusCode: StatusCodeType.CREATED,
+        message: ResponseMessageType.SUCCESS_CREATE_DATA,
         data: order,
       });
     } catch (err) {
-      res.status(500).json({
-        statusCode: 500,
-        message: ErrorMessageType.INTERNAL_SERVER_ERROR,
+      res.status(StatusCodeType.INTERNAL_SERVER_ERROR).json({
+        statusCode: StatusCodeType.INTERNAL_SERVER_ERROR,
+        message: ResponseMessageType.INTERNAL_SERVER_ERROR,
       });
     }
   }
 
-  async update(req: Request, res: Response): Promise<void> {
+  async update(
+    req: Request,
+    res: Response<ResponseBody<Order>>
+  ): Promise<void> {
     try {
       const { id } = req.params;
       const body = req.body;
 
       const order = await this.orderService.update(id, body);
 
-      res.status(200).json({
-        statusCode: 200,
-        message: ErrorMessageType.SUCCESS_UPDATE_DATA,
+      res.status(StatusCodeType.OK).json({
+        statusCode: StatusCodeType.OK,
+        message: ResponseMessageType.SUCCESS_UPDATE_DATA,
         data: order,
       });
     } catch (err) {
-      res.status(500).json({
-        statusCode: 500,
-        message: ErrorMessageType.INTERNAL_SERVER_ERROR,
+      const error = err as Error;
+
+      if (error.message === ResponseMessageType.NOT_FOUND) {
+        res.status(StatusCodeType.NOT_FOUND).json({
+          statusCode: StatusCodeType.NOT_FOUND,
+          message: ResponseMessageType.NOT_FOUND,
+        });
+
+        return;
+      }
+
+      res.status(StatusCodeType.INTERNAL_SERVER_ERROR).json({
+        statusCode: StatusCodeType.INTERNAL_SERVER_ERROR,
+        message: ResponseMessageType.INTERNAL_SERVER_ERROR,
       });
     }
   }

@@ -1,6 +1,5 @@
 import makeQueue from "../../config/queue";
 import { orderProcess } from "../processes/order.process";
-import { CreateOrderDto } from "../../order/dto/create-order.dto";
 import { OrderService } from "../../order/order.service";
 import { Order } from "../../order/entities/order.entity";
 import { Job } from "bull";
@@ -25,7 +24,7 @@ orderQueue.on("failed", async (job, result) => {
   queueLoggerHelper(job, "order", "FAILED");
 });
 
-export const createOrder = (data: CreateOrderDto) => {
+export const createOrder = (data: Order) => {
   const normalizeData = {
     ...data,
     status: "PENDING",
