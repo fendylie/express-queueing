@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { OrderService } from "./order.service";
 import { createOrder } from "../jobs/queues/order.queue";
+import { ErrorMessageType } from "../constants";
 
 export class OrderController {
   constructor(private orderService: OrderService) {}
@@ -11,12 +12,13 @@ export class OrderController {
 
       res.status(200).json({
         statusCode: 200,
-        message: "Successfully get data",
+        message: ErrorMessageType.SUCCESS_FETCH_DATA,
         data: users,
       });
     } catch (err) {
       res.status(500).json({
-        message: "Internal server error",
+        statusCode: 500,
+        message: ErrorMessageType.INTERNAL_SERVER_ERROR,
       });
     }
   }
@@ -28,12 +30,14 @@ export class OrderController {
       await createOrder(body);
 
       res.status(200).json({
-        message: "Successfully created data",
+        statusCode: 200,
+        message: ErrorMessageType.SUCCESS_CREATE_DATA,
         data: order,
       });
     } catch (err) {
       res.status(500).json({
-        message: "Internal server error",
+        statusCode: 500,
+        message: ErrorMessageType.INTERNAL_SERVER_ERROR,
       });
     }
   }
@@ -46,12 +50,14 @@ export class OrderController {
       const order = await this.orderService.update(id, body);
 
       res.status(200).json({
-        message: "Successfully updated data",
+        statusCode: 200,
+        message: ErrorMessageType.SUCCESS_UPDATE_DATA,
         data: order,
       });
     } catch (err) {
       res.status(500).json({
-        message: "Internal server error",
+        statusCode: 500,
+        message: ErrorMessageType.INTERNAL_SERVER_ERROR,
       });
     }
   }

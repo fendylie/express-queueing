@@ -1,6 +1,5 @@
 import { DataSource } from "typeorm";
-import { User } from "../users/user.entity";
-import { Order } from "../orders/entities/order.entity";
+import { Order } from "../order/entities/order.entity";
 
 export default new DataSource({
   type: "mysql",
@@ -9,7 +8,7 @@ export default new DataSource({
   username: "root",
   password: "",
   database: "express",
-  synchronize: true,
+  synchronize: process.env.NODE_ENV === "DEVELOPMENT",
   logging: false,
-  entities: [User, Order],
+  entities: [Order],
 });
